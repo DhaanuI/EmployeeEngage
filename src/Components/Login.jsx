@@ -15,9 +15,9 @@ export const QuestLogin = (props) => {
     const {
         questId = "", font = 'Hanken Grotesk',
         textColor = "black",
-        btnTextColor = "black",
+        btnTextColor = "white",
         backgroundColor = "white",
-        btnColor = "skyblue",
+        btnColor = "black",
         googleClientId = "103575086200-2gijbo8rldrv5sg60u0u1rl4cmldhm8a.apps.googleusercontent.com",
         redirectUri = "http://localhost:3000",
         redirectURL = "https://www.questlabs.ai/"

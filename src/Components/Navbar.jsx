@@ -9,7 +9,7 @@ const Navbar = () => {
             </div>
             <div style={styles.appName}>
                 <Link to="/" style={styles.link}>
-                    Your App Name
+                    Employee Engage
                 </Link>
             </div>
             <div style={styles.loginContainer}>
