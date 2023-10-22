@@ -18,6 +18,8 @@ const Login = () => {
     const [otp, setOtp] = useState('');
     const [isEmailSubmitted, setIsEmailSubmitted] = useState(false);
 
+    const [loadingOrg, setLoadingOrg] = useState(false);
+    const [loadingEmp, setLoadingEmp] = useState(false);
     const { isLoggedIn, login } = useAuth();
 
     const handleEmailChange = (e) => {
@@ -46,6 +48,7 @@ const Login = () => {
 
     const handleEmployeeAction = async () => {
         try {
+            setLoadingEmp(true);
             if (isEmailSubmitted) {
                 const response = await axios.post(`${BACKEND_URL}api/employee/verify-otp`, {
                     name: employeeName,
@@ -71,12 +74,14 @@ const Login = () => {
 
         } catch (error) {
             console.error(error.message);
+        } finally {
+            setLoadingEmp(false);
         }
     };
 
     const handleOrgAction = async () => {
         try {
-
+            setLoadingOrg(true);
             const response = await axios.post(`${BACKEND_URL}api/organisation/login`, {
                 name,
                 email,
@@ -102,6 +107,8 @@ const Login = () => {
 
         } catch (error) {
             console.error(error.message);
+        } finally {
+            setLoadingOrg(false);
         }
     };
 
@@ -167,7 +174,7 @@ const Login = () => {
                         <br />
                         <div>
                             <button onClick={handleOrgAction} style={{ marginRight: '20px' }}>
-                                Login
+                                {loadingOrg ? 'Loading...' : 'Login'}
                             </button>
 
                             {/* <button>
@@ -198,7 +205,7 @@ const Login = () => {
                         <br />
                         <div>
                             <button onClick={handleEmployeeAction} style={{ marginRight: '20px' }}>
-                                {isEmailSubmitted ? 'Login' : 'Continue'}
+                                {loadingEmp ? 'Loading...' : isEmailSubmitted ? 'Login' : 'Continue'}
                             </button>
 
                             {/* <button>

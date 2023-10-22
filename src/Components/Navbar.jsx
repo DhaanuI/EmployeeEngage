@@ -4,16 +4,16 @@ import { useAuth } from '../AuthContext';
 
 
 const Navbar = () => {
-    const { isLoggedIn, isEmployee } = useAuth();
+    const { isLoggedIn, isEmployee, logout } = useAuth();
 
     const handleLogout = () => {
-
         localStorage.removeItem('id');
         localStorage.removeItem('userId');
         localStorage.removeItem('selectedEmployeeId');
         localStorage.removeItem('isEmployee');
         localStorage.removeItem('token');
 
+        logout()
     };
 
 
