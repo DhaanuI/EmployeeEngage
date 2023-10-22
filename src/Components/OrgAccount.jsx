@@ -120,6 +120,21 @@ const Organisation = () => {
     const [employeeEmail, setEmployeeEmail] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
 
+    const [isCreateSurveyModalOpen, setIsCreateSurveyModalOpen] = useState(false);
+    const [surveyTitle, setSurveyTitle] = useState('');
+    const [surveyDescription, setSurveyDescription] = useState('');
+    // const [surveyFeedback, setSurveyFeedback] = useState('');
+
+    const openCreateSurveyModal = () => {
+        setIsCreateSurveyModalOpen(true);
+    };
+
+    const closeCreateSurveyModal = () => {
+        setIsCreateSurveyModalOpen(false);
+    };
+
+
+
     useEffect(() => {
         if (!isLoggedIn) {
             alert('You are not logged in. Please log in to access this page.');
@@ -155,7 +170,7 @@ const Organisation = () => {
                 {
                     name: employeeName,
                     email: employeeEmail,
-                    organisation: localStorage.getItem("userId")
+                    organisation: localStorage.getItem("id")
                 }
             );
             fetchOrganisationDetails();
@@ -178,6 +193,24 @@ const Organisation = () => {
     }
 
 
+    // for survey
+
+    const handleCreateSurvey = async () => {
+        try {
+            const response = await axios.post(
+                `http://localhost:4500/api/organisation/${localStorage.getItem("id")}/create-survey`,
+                {
+                    title: surveyTitle,
+                    description: surveyDescription
+                }
+            );
+            console.log(response.data);
+            closeCreateSurveyModal();
+        } catch (error) {
+            console.error('Error creating survey:', error);
+        }
+    };
+
     return (
         <div className='Org'>
             <div style={{ textAlign: 'center' }}>
@@ -193,6 +226,20 @@ const Organisation = () => {
                     onChange={handleSearch}
                 />
             </div>
+
+            <div style={{ position: 'absolute', top: '15%', right: '40px' }}>
+                <button onClick={openCreateSurveyModal}
+                    style={{
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                    }}>Create Survey</button>
+            </div>
+
+
             <div className="employee-list">
                 {filteredEmployees && filteredEmployees.length > 0 ? (
                     filteredEmployees.map((employee, index) => (
@@ -238,6 +285,56 @@ const Organisation = () => {
                             </button>
                         </form>
 
+                    </div>
+                </div>
+            )}
+
+            {isCreateSurveyModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Create Survey</h2>
+                        <form>
+                            <div className="form-group">
+                                <label htmlFor="surveyTitle">Title:</label>
+                                <input
+                                    type="text"
+                                    id="surveyTitle"
+                                    value={surveyTitle}
+                                    onChange={(e) => setSurveyTitle(e.target.value)}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="surveyDescription">Description:</label>
+                                <textarea
+                                    id="surveyDescription"
+                                    value={surveyDescription}
+                                    onChange={(e) => setSurveyDescription(e.target.value)}
+                                />
+                            </div>
+                            {/* <div className="form-group">
+                                <label htmlFor="surveyFeedback">What do you think about this?</label>
+                                <textarea
+                                    id="surveyFeedback"
+                                    value={surveyFeedback}
+                                    onChange={(e) => setSurveyFeedback(e.target.value)}
+                                />
+                            </div> */}
+                            <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeCreateSurveyModal}>
+                                Cancel
+                            </button>
+                            <button type="button" onClick={handleCreateSurvey}
+                                style={{
+                                    backgroundColor: '#4CAF50',
+                                    color: 'white',
+                                    padding: '10px 20px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Create Survey
+                            </button>
+                        </form>
                     </div>
                 </div>
             )}

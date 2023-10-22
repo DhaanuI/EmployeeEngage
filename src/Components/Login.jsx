@@ -50,7 +50,7 @@ const Login = () => {
                     email: employeeEmail,
                     otp,
                 });
-                console.log(response.data);
+
                 login();
                 localStorage.setItem('userId', response.data.userId);
                 localStorage.setItem('token', response.data.token);
@@ -63,7 +63,6 @@ const Login = () => {
                     name: employeeName,
                     email: employeeEmail,
                 });
-                console.log(response.data);
 
                 setIsEmailSubmitted(true);
             }

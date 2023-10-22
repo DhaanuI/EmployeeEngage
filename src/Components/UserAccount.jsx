@@ -5,7 +5,9 @@ import { useAuth } from '../AuthContext';
 
 const Employee = () => {
     const { isLoggedIn, isEmployee } = useAuth();
+    const [organisationSurveys, setOrganisationSurveys] = useState([]);
 
+    const [commentText, setCommentText] = useState('');
 
     const [employeeDetails, setEmployeeDetails] = useState({
         name: 'Employee Name',
@@ -16,6 +18,8 @@ const Employee = () => {
         tasks: [],
         completedTasks: [],
     });
+
+
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -42,13 +46,29 @@ const Employee = () => {
             );
             console.log(response)
             setEmployeeDetails(response.data.employee);
+
+            fetchOrganisationSurveys(response.data.employee.organisation);
         } catch (error) {
             console.error('Error fetching employee details:', error);
         }
     };
 
+
+    const fetchOrganisationSurveys = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:4500/api/organisation/${id}/survey`);
+            console.log(response)
+            setOrganisationSurveys(response.data.data);
+        } catch (error) {
+            console.error('Error fetching organisation surveys:', error);
+
+        }
+    };
+
     const markTaskCompleted = async (id) => {
-        console.log(id)
+        if (isEmployee !== 'true') {
+            return alert("Only Employee can submit this request")
+        }
         try {
             const response = await axios.patch(`http://localhost:4500/api/employee/tasks/${id}/mark-complete`);
             console.log(response)
@@ -62,6 +82,24 @@ const Employee = () => {
         }
     };
 
+    const submitComments = async (surveyId) => {
+        if (!commentText) return alert("Comments cannot be empty")
+
+        if (isEmployee !== 'true') {
+            return alert("Only Employee can submit this request")
+        }
+
+        try {
+            await axios.post(`http://localhost:4500/api/surveys/${surveyId}/comments`, {
+                employeeId: employeeDetails._id,
+                text: commentText,
+            });
+            setCommentText('');
+        } catch (error) {
+            console.error('Error submitting comments:', error);
+
+        }
+    };
 
     return (
         <div>
@@ -91,9 +129,12 @@ const Employee = () => {
                                             {task.description}<br />
                                             <strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline'}<br />
                                             {!task.completed && (
-                                                <button style={{ backgroundColor: '#00acd8', color: 'white' }} onClick={() => markTaskCompleted(task._id)}>
-                                                    Mark as Completed
-                                                </button>
+                                                <div>
+                                                    <button style={{ backgroundColor: '#00acd8', color: 'white' }} onClick={() => markTaskCompleted(task._id)}>
+                                                        Mark as Completed
+                                                    </button>
+
+                                                </div>
                                             )}
                                         </li>
                                     ))
@@ -106,9 +147,8 @@ const Employee = () => {
 
             <br />
 
-            <div style={{ border: '1px solid #e0d7d7', width: '90%', textAlign: 'center', marginLeft: '60px' }}>
+            <div style={{ border: '1px solid #e0d7d7', width: '90%', textAlign: 'center', marginLeft: '60px' }}></div>
 
-            </div>
             <br />
             <div className='userInfoDiv' >
                 <div style={{ width: '50%', textAlign: 'center' }}>
@@ -155,6 +195,38 @@ const Employee = () => {
 
                     </div>
                 </div>
+            </div>
+
+            <div style={{ paddingLeft: '50px' }}>
+                <h2 style={{ color: '#00acd8' }}>Organisation Surveys</h2>
+                <br />
+
+                <div style={{ overflowY: 'auto', height: '60vh' }}>
+                    <ul>
+                        {organisationSurveys.length === 0 ? (
+                            <li>No surveys available</li>
+                        ) : (
+                            organisationSurveys.map((survey, index) => (
+                                <li key={index}>
+                                    <strong>Title:</strong> {survey.title}<br />
+                                    <strong>Description:</strong> {survey.description}<br />
+
+                                    {survey.comments && survey.comments.find(comment => comment.userId === employeeDetails._id) ? (
+                                        <p>You have already submitted comments.</p>
+                                    ) : (
+                                        <>
+                                            <textarea
+                                                placeholder="Your comments..."
+                                            ></textarea>
+                                            <button onClick={() => submitComments(survey._id)}>Submit</button>
+                                        </>
+                                    )}
+                                </li>
+                            ))
+                        )}
+                    </ul>
+                </div>
+
             </div>
         </div>
 
