@@ -117,7 +117,7 @@ const Employee = () => {
                 <div style={{ width: '50%', paddingLeft: '20px' }}>
                     <h2 style={{ color: '#425670' }}>Pending Tasks</h2>
 
-                    <div style={{ overflowY: 'auto', height: '60vh' }}>
+                    <div style={{ overflowY: 'auto', height: '52vh' }}>
                         <ul>
                             {employeeDetails.tasks.length === 0 ? (
                                 <li>No pending tasks</li>
