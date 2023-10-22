@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './UserAccount.css'
 import { useAuth } from '../AuthContext';
+import { BACKEND_URL } from '../config';
 
 const Employee = () => {
     const { isLoggedIn, isEmployee } = useAuth();
@@ -42,7 +43,7 @@ const Employee = () => {
     const fetchEmployeeDetails = async (id) => {
         try {
             const response = await axios.get(
-                `http://localhost:4500/api/employee/${id}`
+                `${BACKEND_URL}api/employee/${id}`
             );
             console.log(response)
             setEmployeeDetails(response.data.employee);
@@ -56,7 +57,7 @@ const Employee = () => {
 
     const fetchOrganisationSurveys = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:4500/api/organisation/${id}/survey`);
+            const response = await axios.get(`${BACKEND_URL}api/organisation/${id}/survey`);
             console.log(response)
             setOrganisationSurveys(response.data.data);
         } catch (error) {
@@ -70,10 +71,10 @@ const Employee = () => {
             return alert("Only Employee can submit this request")
         }
         try {
-            const response = await axios.patch(`http://localhost:4500/api/employee/tasks/${id}/mark-complete`);
+            const response = await axios.patch(`${BACKEND_URL}api/employee/tasks/${id}/mark-complete`);
             console.log(response)
             if (response.data.success) {
-                fetchEmployeeDetails();
+                fetchEmployeeDetails(localStorage.getItem("userId"));
             } else {
                 console.error('Failed to mark task as completed:', response.data.message);
             }
@@ -90,7 +91,7 @@ const Employee = () => {
         }
 
         try {
-            await axios.post(`http://localhost:4500/api/surveys/${surveyId}/comments`, {
+            await axios.post(`${BACKEND_URL}api/surveys/${surveyId}/comments`, {
                 employeeId: employeeDetails._id,
                 text: commentText,
             });

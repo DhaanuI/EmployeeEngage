@@ -3,6 +3,8 @@ import axios from 'axios'
 import './Login.css'; // Import your CSS file
 import image from '../Images/login.jpg'
 import { useAuth } from '../AuthContext';
+import { BACKEND_URL as BACKEND_URL } from "../config.js";
+
 
 // if organisation then id
 // if employee then userId 
@@ -45,7 +47,7 @@ const Login = () => {
     const handleEmployeeAction = async () => {
         try {
             if (isEmailSubmitted) {
-                const response = await axios.post('http://localhost:4500/api/employee/verify-otp', {
+                const response = await axios.post(`${BACKEND_URL}api/employee/verify-otp`, {
                     name: employeeName,
                     email: employeeEmail,
                     otp,
@@ -59,7 +61,7 @@ const Login = () => {
                 setEmployeeName("")
                 window.location.href = '/employee/profile'
             } else {
-                const response = await axios.post('http://localhost:4500/api/employee/send-otp', {
+                const response = await axios.post(`${BACKEND_URL}api/employee/send-otp`, {
                     name: employeeName,
                     email: employeeEmail,
                 });
@@ -75,7 +77,7 @@ const Login = () => {
     const handleOrgAction = async () => {
         try {
 
-            const response = await axios.post('http://localhost:4500/api/organisation/login', {
+            const response = await axios.post(`${BACKEND_URL}api/organisation/login`, {
                 name,
                 email,
                 password

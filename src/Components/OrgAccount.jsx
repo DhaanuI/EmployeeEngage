@@ -3,6 +3,7 @@ import axios from 'axios';
 import './OrgAccount.css'
 import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { BACKEND_URL } from '../config';
 
 
 const EmployeeCard = ({ employee }) => {
@@ -27,7 +28,7 @@ const EmployeeCard = ({ employee }) => {
         const id = employee._id
         try {
             const response = await axios.post(
-                `http://localhost:4500/api/employee/${id}/tasks/add-task`,
+                `${BACKEND_URL}api/employee/${id}/tasks/add-task`,
                 {
                     title: taskTitle,
                     description: taskDescription,
@@ -147,7 +148,7 @@ const Organisation = () => {
     const fetchOrganisationDetails = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:4500/api/organisation/${localStorage.getItem("id")}`
+                `${BACKEND_URL}api/organisation/${localStorage.getItem("id")}`
             );
             setOrganisationDetails(response.data.organisation);
         } catch (error) {
@@ -166,7 +167,7 @@ const Organisation = () => {
     const handleAddEmployee = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:4500/api/organisation/${localStorage.getItem("userId")}/add-employee`,
+                `${BACKEND_URL}api/organisation/${localStorage.getItem("userId")}/add-employee`,
                 {
                     name: employeeName,
                     email: employeeEmail,
@@ -198,7 +199,7 @@ const Organisation = () => {
     const handleCreateSurvey = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:4500/api/organisation/${localStorage.getItem("id")}/create-survey`,
+                `${BACKEND_URL}api/organisation/${localStorage.getItem("id")}/create-survey`,
                 {
                     title: surveyTitle,
                     description: surveyDescription
