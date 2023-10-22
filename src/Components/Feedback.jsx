@@ -1,4 +1,5 @@
 import React from 'react';
+import './Feedback.css'
 import { entityId } from "../config.js";
 import { userId as uId } from "../config.js";
 import { apiSecret as apiS } from "../config.js";
@@ -11,11 +12,11 @@ export default function FeedBack(
     {
         bgColor = 'white',
         btnColor = '',
-        heading = "Interactive Feedback Hub",
+        heading = "Employee Engage",
         btnTextColor = '',
         textColor = 'black',
         supportUrl = 'contact-support',
-        subHeading = "Empowering Seamless Communication and Iteration",
+        subHeading = "Enhance Workplace Productivity and Collaboration",
         questId = 'q-1a12c0e1-35a8-48a3-8cde-a8616f341b88',
         userId = uId,
         token = tkn,

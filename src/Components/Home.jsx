@@ -19,6 +19,7 @@ const Home = () => {
             width: '100%',
             height: 'auto',
             display: 'block',
+            filter: 'brightness(0.5)'
         },
         overlay: {
             position: 'absolute',
@@ -80,7 +81,6 @@ const Cards = () => {
         },
         heading: {
             fontSize: '50px',
-
             marginBottom: '10px',
         },
         paragraph: {
@@ -94,7 +94,7 @@ const Cards = () => {
     };
 
     return (
-        <div>
+        <div style={{padding:'30px'}}>
             <div style={styles.container}>
                 <div style={styles.leftContent}>
                     <div>
@@ -126,7 +126,7 @@ const Cards = () => {
                     <div>
                         <p style={styles.heading}>Simplify Rewards & Recognition</p>
                         <p style={styles.paragraph}>
-                            A streamlined platform makes tracking service anniversaries, birthdays, and recognition simple and seamless with hundreds of integrations, automated CMS, and a full suite of reporting and analytics.
+                            A streamlined platform makes tracking service anniversaries, birthdays, and recognition.
                         </p>
                     </div>
                 </div>

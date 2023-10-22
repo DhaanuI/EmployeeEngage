@@ -1,0 +1,28 @@
+.q-feedback-cont {
+    height: 80vh;
+    overflow-y: auto;
+}
+
+/* Style the scrollbar */
+.q-feedback-cont::-webkit-scrollbar {
+    width: 2px;
+    /* Set the width of the scrollbar */
+}
+
+/* Handle on hover */
+.q-feedback-cont::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Change color on hover */
+}
+
+/* Set scrollbar color */
+.q-feedback-cont::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Set the color of the scrollbar */
+}
+
+/* Set track color */
+.q-feedback-cont::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    /* Set the color of the track */
+}
