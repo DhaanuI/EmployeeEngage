@@ -26,7 +26,8 @@ input {
     margin-bottom: 16px;
 }
 
-.login-container button {
+.login-container button,
+.submitSurveyButton {
     background-color: #4caf50;
     color: white;
 
@@ -46,6 +47,7 @@ select {
     font-size: 16px;
 }
 
-.login-container button:hover {
+.login-container button:hover,
+.submitSurveyButton:hover {
     background-color: #45a049;
 }

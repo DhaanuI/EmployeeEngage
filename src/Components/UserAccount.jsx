@@ -8,9 +8,10 @@ const Employee = () => {
     const { isLoggedIn, isEmployee } = useAuth();
     const [organisationSurveys, setOrganisationSurveys] = useState([]);
 
-    const [commentText, setCommentText] = useState('');
+    // const [commentText, setCommentText] = useState('');
 
     const [employeeDetails, setEmployeeDetails] = useState({
+        _id :'1234',
         name: 'Employee Name',
         email: 'employee@example.com',
         picture: 'path-to-picture.jpg',
@@ -20,6 +21,7 @@ const Employee = () => {
         completedTasks: [],
     });
 
+    const [commentTextArray, setCommentTextArray] = useState(new Array(organisationSurveys.length).fill(''));
 
 
     useEffect(() => {
@@ -28,13 +30,13 @@ const Employee = () => {
             window.location.href = "/login"
             return;
         }
-        console.log(isEmployee)
+
         if (isEmployee == "true") {
-            console.log("if")
+
             fetchEmployeeDetails(localStorage.getItem("userId"));
         }
         else {
-            console.log("else")
+
             fetchEmployeeDetails(localStorage.getItem("selectedEmployeeId"));
         }
 
@@ -45,7 +47,7 @@ const Employee = () => {
             const response = await axios.get(
                 `${BACKEND_URL}api/employee/${id}`
             );
-            console.log(response)
+
             setEmployeeDetails(response.data.employee);
 
             fetchOrganisationSurveys(response.data.employee.organisation);
@@ -58,7 +60,7 @@ const Employee = () => {
     const fetchOrganisationSurveys = async (id) => {
         try {
             const response = await axios.get(`${BACKEND_URL}api/organisation/${id}/survey`);
-            console.log(response)
+
             setOrganisationSurveys(response.data.data);
         } catch (error) {
             console.error('Error fetching organisation surveys:', error);
@@ -72,7 +74,7 @@ const Employee = () => {
         }
         try {
             const response = await axios.patch(`${BACKEND_URL}api/employee/tasks/${id}/mark-complete`);
-            console.log(response)
+
             if (response.data.success) {
                 fetchEmployeeDetails(localStorage.getItem("userId"));
             } else {
@@ -83,19 +85,24 @@ const Employee = () => {
         }
     };
 
-    const submitComments = async (surveyId) => {
-        if (!commentText) return alert("Comments cannot be empty")
+    const submitComments = async (surveyId, commentText) => {
 
+        if (!commentText) return alert("Comments cannot be empty")
+        console.log(employeeDetails)
         if (isEmployee !== 'true') {
             return alert("Only Employee can submit this request")
         }
 
         try {
-            await axios.post(`${BACKEND_URL}api/surveys/${surveyId}/comments`, {
+           const res=  await axios.post(`${BACKEND_URL}api/organisation/surveys/${surveyId}/comments`, {
                 employeeId: employeeDetails._id,
                 text: commentText,
             });
-            setCommentText('');
+            console.log(res)
+            const newArray = [...commentTextArray];
+            const index = organisationSurveys.findIndex(survey => survey._id === surveyId);
+            newArray[index] = '';
+            setCommentTextArray(newArray);
         } catch (error) {
             console.error('Error submitting comments:', error);
 
@@ -212,16 +219,25 @@ const Employee = () => {
                                     <strong>Title:</strong> {survey.title}<br />
                                     <strong>Description:</strong> {survey.description}<br />
 
-                                    {survey.comments && survey.comments.find(comment => comment.userId === employeeDetails._id) ? (
+                                    {survey.comments && survey.comments.find(comment => comment.employee === employeeDetails._id) ? (
                                         <p>You have already submitted comments.</p>
                                     ) : (
                                         <>
-                                            <textarea
-                                                placeholder="Your comments..."
-                                            ></textarea>
-                                            <button onClick={() => submitComments(survey._id)}>Submit</button>
+                                            <div style={{ display: 'flex', gap: '20px' }}>
+                                                <textarea
+                                                    placeholder="Your comments..."
+                                                    value={commentTextArray[index]}
+                                                    onChange={(e) => {
+                                                        const newArray = [...commentTextArray];
+                                                        newArray[index] = e.target.value;
+                                                        setCommentTextArray(newArray);
+                                                    }}
+                                                ></textarea>
+                                                <button className='submitSurveyButton' onClick={() => submitComments(survey._id, commentTextArray[index])}>Submit</button>
+                                            </div>
                                         </>
                                     )}
+                                    <br /> <br />
                                 </li>
                             ))
                         )}

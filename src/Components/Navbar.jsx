@@ -20,13 +20,15 @@ const Navbar = () => {
     return (
         <nav style={styles.navbar}>
             <div style={styles.logoContainer}>
-                <img src="https://png.pngtree.com/png-vector/20190429/ourmid/pngtree-employee-icon-vector-illustration-in-glyph-style-for-any-purpose-png-image_998315.jpg" alt="Logo" style={styles.logo} />
+                <Link to="/" style={styles.link}>
+                    <img src="https://png.pngtree.com/png-vector/20190429/ourmid/pngtree-employee-icon-vector-illustration-in-glyph-style-for-any-purpose-png-image_998315.jpg" alt="Logo" style={styles.logo} />
+                </Link>
             </div>
-            <div style={styles.appName}>
+            {/* <div style={styles.appName}>
                 <Link to="/" style={styles.link}>
                     Employee Engage
                 </Link>
-            </div>
+            </div> */}
             <div style={styles.loginContainer}>
                 {/* <Link to="/pricing" style={styles.link}>
                     Pricing

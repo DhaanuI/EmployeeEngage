@@ -55,7 +55,7 @@ root.render(
           element={
             <>
               <Navbar />
-              <Payments />
+              {/* <Payments /> */}
               <Footer />
             </>
           }

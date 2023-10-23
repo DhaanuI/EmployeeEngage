@@ -4,6 +4,8 @@ import './OrgAccount.css'
 import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { BACKEND_URL } from '../config';
+import { InfinitySpin } from 'react-loader-spinner'
+
 
 
 const EmployeeCard = ({ employee }) => {
@@ -27,6 +29,8 @@ const EmployeeCard = ({ employee }) => {
     const handleAssignTask = async () => {
         const id = employee._id
         try {
+            if (!taskTitle || !taskDescription || !taskDeadline) return alert("Fields cannot be empty");
+
             const response = await axios.post(
                 `${BACKEND_URL}api/employee/${id}/tasks/add-task`,
                 {
@@ -51,9 +55,9 @@ const EmployeeCard = ({ employee }) => {
     };
 
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center' }} className="employee-card">
             <Link to={`/employee/profile`} onClick={handleClick} style={{ textDecoration: 'none', color: 'black' }}>
-                <div className="employee-card">
+                <div >
                     <img src={employee.picture} alt={employee.name} />
                     <h3>{employee.name}</h3>
                     <p>{employee.email}</p>
@@ -109,7 +113,7 @@ const EmployeeCard = ({ employee }) => {
 
 const Organisation = () => {
     const { isLoggedIn } = useAuth();
-
+    const [isLoading, setIsLoading] = useState(true);
     const [organisationDetails, setOrganisationDetails] = useState({
         name: 'Your Organisation Name',
         description: 'Your Organisation Description',
@@ -153,6 +157,8 @@ const Organisation = () => {
             setOrganisationDetails(response.data.organisation);
         } catch (error) {
             console.error('Error fetching organisation details:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -198,6 +204,8 @@ const Organisation = () => {
 
     const handleCreateSurvey = async () => {
         try {
+            if (!surveyTitle || !surveyDescription) return alert("Fields cannot be empty")
+
             const response = await axios.post(
                 `${BACKEND_URL}api/organisation/${localStorage.getItem("id")}/create-survey`,
                 {
@@ -214,105 +222,113 @@ const Organisation = () => {
 
     return (
         <div className='Org'>
-            <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '45px' }}>{organisationDetails.name}</h1>
-                <p>{organisationDetails.description}</p>
-                <button onClick={openAddEmployeeModal} className='addemployee'>Add Employee</button>
-                <br /><br />
-                <input
-                    style={{ width: '300px' }}
-                    type="text"
-                    placeholder="Search Employees"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                />
-            </div>
-
-            <div style={{ position: 'absolute', top: '15%', right: '40px' }}>
-                <button onClick={openCreateSurveyModal}
-                    style={{
-                        backgroundColor: '#4CAF50',
-                        color: 'white',
-                        padding: '10px 20px',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                    }}>Create Survey</button>
-            </div>
-
-
-            <div className="employee-list">
-                {filteredEmployees && filteredEmployees.length > 0 ? (
-                    filteredEmployees.map((employee, index) => (
-                        <div key={employee._id} className="employee-card-wrapper">
-                            <EmployeeCard employee={employee} />
-                        </div>
-                    ))
-                ) : (
-                    <p>No matching employees found</p>
-                )}
-            </div>
-
-
-
-            {isAddEmployeeModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Add Employee</h2>
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="employeeName">Name:</label>
-                                <input
-                                    type="text"
-                                    id="employeeName"
-                                    value={employeeName}
-                                    onChange={(e) => setEmployeeName(e.target.value)}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="employeeEmail">Email:</label>
-                                <input
-                                    type="email"
-                                    id="employeeEmail"
-                                    value={employeeEmail}
-                                    onChange={(e) => setEmployeeEmail(e.target.value)}
-                                />
-                            </div>
-                            <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeAddEmployeeModal}>
-                                Cancel
-                            </button>
-                            <button type="button" className='addemployee' onClick={handleAddEmployee}>
-                                Add Employee
-                            </button>
-                        </form>
-
-                    </div>
+            {isLoading ? (
+                <div style={{
+                    marginTop: '100px',
+                    height: '100vh',
+                    textAlign: 'center',
+                }}>
+                    <InfinitySpin width='200' color="#4fa94d" />
                 </div>
-            )}
+            ) : (
+                <div>
+                    <div style={{ textAlign: 'center' }}>
+                        <h1 style={{ fontSize: '45px' }}>{organisationDetails.name}</h1>
+                        <p>{organisationDetails.description}</p>
+                        <button onClick={openAddEmployeeModal} className='addemployee'>Add Employee</button>
+                        <br /><br />
+                        <input
+                            style={{ width: '300px' }}
+                            type="text"
+                            placeholder="Search Employees"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                        />
+                    </div>
 
-            {isCreateSurveyModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Create Survey</h2>
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="surveyTitle">Title:</label>
-                                <input
-                                    type="text"
-                                    id="surveyTitle"
-                                    value={surveyTitle}
-                                    onChange={(e) => setSurveyTitle(e.target.value)}
-                                />
+                    <div style={{ position: 'absolute', top: '15%', right: '40px' }}>
+                        <button onClick={openCreateSurveyModal}
+                            style={{
+                                backgroundColor: '#4CAF50',
+                                color: 'white',
+                                padding: '10px 20px',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                            }}>Create Survey</button>
+                    </div>
+
+
+                    <div className="employee-list">
+                        {filteredEmployees && filteredEmployees.length > 0 ? (
+                            filteredEmployees.map((employee, index) => (
+                                <div key={employee._id} className="employee-card-wrapper">
+                                    <EmployeeCard employee={employee} />
+                                </div>
+                            ))
+                        ) : (
+                            <p>No matching employees found</p>
+                        )}
+                    </div>
+
+                    {isAddEmployeeModalOpen && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h2>Add Employee</h2>
+                                <form>
+                                    <div className="form-group">
+                                        <label htmlFor="employeeName">Name:</label>
+                                        <input
+                                            type="text"
+                                            id="employeeName"
+                                            value={employeeName}
+                                            onChange={(e) => setEmployeeName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="employeeEmail">Email:</label>
+                                        <input
+                                            type="email"
+                                            id="employeeEmail"
+                                            value={employeeEmail}
+                                            onChange={(e) => setEmployeeEmail(e.target.value)}
+                                        />
+                                    </div>
+                                    <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeAddEmployeeModal}>
+                                        Cancel
+                                    </button>
+                                    <button type="button" className='addemployee' onClick={handleAddEmployee}>
+                                        Add Employee
+                                    </button>
+                                </form>
+
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="surveyDescription">Description:</label>
-                                <textarea
-                                    id="surveyDescription"
-                                    value={surveyDescription}
-                                    onChange={(e) => setSurveyDescription(e.target.value)}
-                                />
-                            </div>
-                            {/* <div className="form-group">
+                        </div>
+                    )}
+
+                    {isCreateSurveyModalOpen && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h2>Create Survey</h2>
+                                <form>
+                                    <div className="form-group">
+                                        <label htmlFor="surveyTitle">Title:</label>
+                                        <input
+                                            type="text"
+                                            id="surveyTitle"
+                                            value={surveyTitle}
+                                            onChange={(e) => setSurveyTitle(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="surveyDescription">Description:</label>
+                                        <textarea
+                                            id="surveyDescription"
+                                            value={surveyDescription}
+                                            onChange={(e) => setSurveyDescription(e.target.value)}
+                                        />
+                                    </div>
+                                    {/* <div className="form-group">
                                 <label htmlFor="surveyFeedback">What do you think about this?</label>
                                 <textarea
                                     id="surveyFeedback"
@@ -320,23 +336,26 @@ const Organisation = () => {
                                     onChange={(e) => setSurveyFeedback(e.target.value)}
                                 />
                             </div> */}
-                            <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeCreateSurveyModal}>
-                                Cancel
-                            </button>
-                            <button type="button" onClick={handleCreateSurvey}
-                                style={{
-                                    backgroundColor: '#4CAF50',
-                                    color: 'white',
-                                    padding: '10px 20px',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Create Survey
-                            </button>
-                        </form>
-                    </div>
+                                    <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeCreateSurveyModal}>
+                                        Cancel
+                                    </button>
+                                    <button type="button" onClick={handleCreateSurvey}
+                                        style={{
+                                            backgroundColor: '#4CAF50',
+                                            color: 'white',
+                                            padding: '10px 20px',
+                                            border: 'none',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        Create Survey
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             )}
         </div>

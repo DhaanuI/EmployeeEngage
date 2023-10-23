@@ -4,9 +4,12 @@
 
 .employee-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 30%);
+    gap: 40px;
     padding: 30px;
+    margin:auto;
+    align-items: center;
+    justify-content: center;
 }
 
 .employee-card-wrapper {
@@ -17,10 +20,16 @@
     width: 70%;
     height: 300px;
     object-fit: contain;
+
+    
 }
 
 .employee-card {
+    padding: 20px;
     text-align: center;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    /* border:1px solid red; */
 }
 
 
