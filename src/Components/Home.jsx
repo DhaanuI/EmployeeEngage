@@ -56,7 +56,7 @@ const Home = () => {
                     Motivate Employees. Celebrate People.
                 </h1>
                 <p style={styles.overlayText}>
-                    EmployeeEngage App is an employee recognition and rewards platform which provides organizations of all sizes with simple, customizable solutions to engage and inspire employees to perform their best.
+                Transform your organization's efficiency with our unified platform—onboard seamlessly, assign tasks effortlessly, reward exceptional performance, and boost engagement through tailored surveys.
                 </p>
             </div>
         </div>
