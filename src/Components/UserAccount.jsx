@@ -3,15 +3,17 @@ import axios from 'axios';
 import './UserAccount.css'
 import { useAuth } from '../AuthContext';
 import { BACKEND_URL } from '../config';
+import { InfinitySpin } from 'react-loader-spinner'
 
 const Employee = () => {
     const { isLoggedIn, isEmployee } = useAuth();
+    const [isLoading, setIsLoading] = useState(true);
     const [organisationSurveys, setOrganisationSurveys] = useState([]);
 
     // const [commentText, setCommentText] = useState('');
 
     const [employeeDetails, setEmployeeDetails] = useState({
-        _id :'1234',
+        _id: '1234',
         name: 'Employee Name',
         email: 'employee@example.com',
         picture: 'path-to-picture.jpg',
@@ -53,6 +55,8 @@ const Employee = () => {
             fetchOrganisationSurveys(response.data.employee.organisation);
         } catch (error) {
             console.error('Error fetching employee details:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -94,7 +98,7 @@ const Employee = () => {
         }
 
         try {
-           const res=  await axios.post(`${BACKEND_URL}api/organisation/surveys/${surveyId}/comments`, {
+            const res = await axios.post(`${BACKEND_URL}api/organisation/surveys/${surveyId}/comments`, {
                 employeeId: employeeDetails._id,
                 text: commentText,
             });
@@ -114,137 +118,150 @@ const Employee = () => {
             <h1 style={{ fontSize: '40px', textAlign: 'center', color: '#00acd8' }}>Employee Information</h1>
             <br />
 
-            <div className='userInfoDiv'>
-                <div style={{ textAlign: 'center', width: '50%' }}>
-                    <h2>{employeeDetails.name}</h2>
-                    <p>{employeeDetails.email}</p>
-                    <img style={{ width: '400px', height: '300px', objectFit: 'contain' }} src={employeeDetails.picture} alt={employeeDetails.name} />
+            {isLoading ? (
+                <div style={{
+                    marginTop: '100px',
+                    height: '100vh',
+                    textAlign: 'center',
+                }}>
+                    <InfinitySpin width='200' color="#4fa94d" />
                 </div>
-                <hr />
-                <div style={{ width: '50%', paddingLeft: '20px' }}>
-                    <h2 style={{ color: '#425670' }}>Pending Tasks</h2>
+            ) : (
 
-                    <div style={{ overflowY: 'auto', height: '52vh' }}>
-                        <ul>
-                            {employeeDetails.tasks.length === 0 ? (
-                                <li>No pending tasks</li>
-                            ) : (
-                                employeeDetails.tasks
-                                    .filter(task => !task.completed)
-                                    .map((task, index) => (
-                                        <li style={{ marginBottom: '10px' }} key={index}>
-                                            <h3>{task.title}</h3>
-                                            {task.description}<br />
-                                            <strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline'}<br />
-                                            {!task.completed && (
-                                                <div>
-                                                    <button style={{ backgroundColor: '#00acd8', color: 'white' }} onClick={() => markTaskCompleted(task._id)}>
-                                                        Mark as Completed
-                                                    </button>
-
-                                                </div>
-                                            )}
-                                        </li>
-                                    ))
-                            )}
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-
-            <br />
-
-            <div style={{ border: '1px solid #e0d7d7', width: '90%', textAlign: 'center', marginLeft: '60px' }}></div>
-
-            <br />
-            <div className='userInfoDiv' >
-                <div style={{ width: '50%', textAlign: 'center' }}>
-                    <p>Joining Date: {new Date(employeeDetails.joiningDate).toLocaleDateString()}</p>
-                    <br />
-                    {employeeDetails.achievements.length > 0 && (
-                        <>
-                            <h3>Achievements</h3>
-                            <ul>
-                                {employeeDetails.achievements.map((achievement, index) => (
-                                    <li key={index}>{achievement}</li>
-                                ))}
-                            </ul>
-                        </>
-                    )}
-                    {employeeDetails.achievements.length === 0 && (
-                        <div>
-                            <p>No Achievements/Rewards yet!</p>
-                            <p>Tip: Complete your tasks before the deadline to earn rewards.</p>
+                <div>
+                    <div className='userInfoDiv'>
+                        <div style={{ textAlign: 'center', width: '50%' }}>
+                            <h2>{employeeDetails.name}</h2>
+                            <p>{employeeDetails.email}</p>
+                            <img style={{ width: '400px', height: '300px', objectFit: 'contain' }} src={employeeDetails.picture} alt={employeeDetails.name} />
                         </div>
-                    )}
-                </div>
+                        <hr />
+                        <div style={{ width: '50%', paddingLeft: '20px' }}>
+                            <h2 style={{ color: '#425670' }}>Pending Tasks</h2>
 
+                            <div style={{ overflowY: 'auto', height: '52vh' }}>
+                                <ul>
+                                    {employeeDetails.tasks.length === 0 ? (
+                                        <li>No pending tasks</li>
+                                    ) : (
+                                        employeeDetails.tasks
+                                            .filter(task => !task.completed)
+                                            .map((task, index) => (
+                                                <li style={{ marginBottom: '10px' }} key={index}>
+                                                    <h3>{task.title}</h3>
+                                                    {task.description}<br />
+                                                    <strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline'}<br />
+                                                    {!task.completed && (
+                                                        <div>
+                                                            <button style={{ backgroundColor: '#00acd8', color: 'white' }} onClick={() => markTaskCompleted(task._id)}>
+                                                                Mark as Completed
+                                                            </button>
 
-                <hr />
-                <div style={{ width: '50%', paddingLeft: '20px' }}>
-                    <h2 style={{ color: '#00acd8' }}>Completed Tasks</h2>
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            ))
+                                    )}
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <br />
-                    <div style={{ overflowY: 'auto', height: '60vh' }}>
-                        <ul>
-                            {employeeDetails.tasks.filter((task) => task.completed).length === 0 ? (
-                                <li>No Tasks completed yet </li>
-                            ) : (
-                                employeeDetails.tasks
-                                    .filter((task) => task.completed)
-                                    .map((task, index) => (
-                                        <li style={{ marginBottom: '10px' }} key={index}>
-                                            <strong>Title:</strong> {task.title}<br />
-                                            <strong>Description:</strong> {task.description}<br />
+
+                    <div style={{ border: '1px solid #e0d7d7', width: '90%', textAlign: 'center', marginLeft: '60px' }}></div>
+
+                    <br />
+                    <div className='userInfoDiv' >
+                        <div style={{ width: '50%', textAlign: 'center' }}>
+                            <p>Joining Date: {new Date(employeeDetails.joiningDate).toLocaleDateString()}</p>
+                            <br />
+                            {employeeDetails.achievements.length > 0 && (
+                                <>
+                                    <h3>Achievements</h3>
+                                    <ul>
+                                        {employeeDetails.achievements.map((achievement, index) => (
+                                            <li key={index}>{achievement}</li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                            {employeeDetails.achievements.length === 0 && (
+                                <div>
+                                    <p>No Achievements/Rewards yet!</p>
+                                    <p>Tip: Complete your tasks before the deadline to earn rewards.</p>
+                                </div>
+                            )}
+                        </div>
+
+
+                        <hr />
+                        <div style={{ width: '50%', paddingLeft: '20px' }}>
+                            <h2 style={{ color: '#00acd8' }}>Completed Tasks</h2>
+                            <br />
+                            <div style={{ overflowY: 'auto', height: '60vh' }}>
+                                <ul>
+                                    {employeeDetails.tasks.filter((task) => task.completed).length === 0 ? (
+                                        <li>No Tasks completed yet </li>
+                                    ) : (
+                                        employeeDetails.tasks
+                                            .filter((task) => task.completed)
+                                            .map((task, index) => (
+                                                <li style={{ marginBottom: '10px' }} key={index}>
+                                                    <strong>Title:</strong> {task.title}<br />
+                                                    <strong>Description:</strong> {task.description}<br />
+                                                </li>
+                                            ))
+                                    )}
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ paddingLeft: '50px' }}>
+                        <h2 style={{ color: '#00acd8' }}>Organisation Surveys</h2>
+                        <br />
+
+                        <div style={{ overflowY: 'auto', height: '60vh' }}>
+                            <ul>
+                                {organisationSurveys.length === 0 ? (
+                                    <li>No surveys available</li>
+                                ) : (
+                                    organisationSurveys.map((survey, index) => (
+                                        <li key={index}>
+                                            <strong>Title:</strong> {survey.title}<br />
+                                            <strong>Description:</strong> {survey.description}<br />
+
+                                            {survey.comments && survey.comments.find(comment => comment.employee === employeeDetails._id) ? (
+                                                <p>You have already submitted comments.</p>
+                                            ) : (
+                                                <>
+                                                    <div style={{ display: 'flex', gap: '20px' }}>
+                                                        <textarea
+                                                            placeholder="Your comments..."
+                                                            value={commentTextArray[index]}
+                                                            onChange={(e) => {
+                                                                const newArray = [...commentTextArray];
+                                                                newArray[index] = e.target.value;
+                                                                setCommentTextArray(newArray);
+                                                            }}
+                                                        ></textarea>
+                                                        <button className='submitSurveyButton' onClick={() => submitComments(survey._id, commentTextArray[index])}>Submit</button>
+                                                    </div>
+                                                </>
+                                            )}
+                                            <br /> <br />
                                         </li>
                                     ))
-                            )}
-                        </ul>
+                                )}
+                            </ul>
+                        </div>
 
                     </div>
                 </div>
-            </div>
-
-            <div style={{ paddingLeft: '50px' }}>
-                <h2 style={{ color: '#00acd8' }}>Organisation Surveys</h2>
-                <br />
-
-                <div style={{ overflowY: 'auto', height: '60vh' }}>
-                    <ul>
-                        {organisationSurveys.length === 0 ? (
-                            <li>No surveys available</li>
-                        ) : (
-                            organisationSurveys.map((survey, index) => (
-                                <li key={index}>
-                                    <strong>Title:</strong> {survey.title}<br />
-                                    <strong>Description:</strong> {survey.description}<br />
-
-                                    {survey.comments && survey.comments.find(comment => comment.employee === employeeDetails._id) ? (
-                                        <p>You have already submitted comments.</p>
-                                    ) : (
-                                        <>
-                                            <div style={{ display: 'flex', gap: '20px' }}>
-                                                <textarea
-                                                    placeholder="Your comments..."
-                                                    value={commentTextArray[index]}
-                                                    onChange={(e) => {
-                                                        const newArray = [...commentTextArray];
-                                                        newArray[index] = e.target.value;
-                                                        setCommentTextArray(newArray);
-                                                    }}
-                                                ></textarea>
-                                                <button className='submitSurveyButton' onClick={() => submitComments(survey._id, commentTextArray[index])}>Submit</button>
-                                            </div>
-                                        </>
-                                    )}
-                                    <br /> <br />
-                                </li>
-                            ))
-                        )}
-                    </ul>
-                </div>
-
-            </div>
+            )}
         </div>
 
     );

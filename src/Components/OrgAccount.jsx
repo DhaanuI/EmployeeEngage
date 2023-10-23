@@ -328,14 +328,7 @@ const Organisation = () => {
                                             onChange={(e) => setSurveyDescription(e.target.value)}
                                         />
                                     </div>
-                                    {/* <div className="form-group">
-                                <label htmlFor="surveyFeedback">What do you think about this?</label>
-                                <textarea
-                                    id="surveyFeedback"
-                                    value={surveyFeedback}
-                                    onChange={(e) => setSurveyFeedback(e.target.value)}
-                                />
-                            </div> */}
+                                    
                                     <button type="button" style={{ marginRight: '20px' }} className='cancel' onClick={closeCreateSurveyModal}>
                                         Cancel
                                     </button>
